@@ -1,4 +1,5 @@
 package com.example;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
@@ -8,7 +9,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,10 +18,10 @@ public class QueueSimulation extends Application {
     private static final double CASHIER_X = 300;  // X-координата каси
     private static final double CASHIER_Y = 200;  // Y-координата каси
     private static final double QUEUE_GAP = 25;  // Відстань між об'єктами в черзі
-    private static final int ADD_INTERVAL = 1000;  // Інтервал додавання нових об'єктів (в мс)
-    private static final int OBJECT_LIFETIME = 5000;  // Час до видалення об'єкта (5 секунд)
+    private static final int ADD_INTERVAL = 1300;  // Інтервал додавання нових об'єктів (в мс)
+    private static final int OBJECT_LIFETIME = 1000;  // Час до видалення об'єкта (5 секунд)
 
-    private final List<PhysicalObject> objects = new ArrayList<>();  // Список фізичних об'єктів
+    private final List<IPhysicalObject> objects = new ArrayList<>();  // Список фізичних об'єктів
     private final Pane pane = new Pane();  // Панель для відображення
     private final RenderEngine renderEngine = new RenderEngine(pane);  // Рендеринг об'єктів
 
@@ -47,16 +47,16 @@ public class QueueSimulation extends Application {
 
     // Додавання нового об'єкта до черги
     private void addObjectToQueue() {
-        PhysicalObject object = new PhysicalObjectImpl(50, 50, RECT_SIZE, RECT_SIZE, Color.BLUE);
-        renderEngine.addObject(object.getPosition(), ((PhysicalObjectImpl) object).getRectangle());
-        objects.add(object);
+        IPhysicalObject object = new PhysicalObjectImpl(50, 50, RECT_SIZE, RECT_SIZE, Color.BLUE);
+        renderEngine.addObject(object);  // Додаємо об'єкт до renderEngine
+        objects.add(object);  // Додаємо в список об'єктів
         System.out.println("Added new object at (50, 50)");
     }
 
     // Рух об'єктів до черги перед касою
     private void moveObjectsToQueue() {
         for (int i = 0; i < objects.size(); i++) {
-            PhysicalObject object = objects.get(i);
+            IPhysicalObject object = objects.get(i);
             Position oldPos = object.getPosition();
 
             // Координати цілі для кожного об'єкта
@@ -82,14 +82,12 @@ public class QueueSimulation extends Application {
             object.checkArrival(new Position(targetX, targetY));
 
             Position newPos = object.getPosition();
-            renderEngine.updateObjectPosition(oldPos, newPos);
-
-            System.out.printf("Object at (%f, %f) moving towards (%f, %f)%n", object.getPosition().getX(), object.getPosition().getY(), targetX, targetY);
+            renderEngine.updateObjectPosition(object, oldPos, newPos);  // Оновлення позиції об'єкта
         }
     }
 
     // Запуск таймера для видалення об'єкта через 5 секунд після досягнення цілі
-    private void startObjectRemovalTimer(PhysicalObject object) {
+    private void startObjectRemovalTimer(IPhysicalObject object) {
         // Таймер для видалення об'єкта через 5 секунд після досягнення цілі
         PauseTransition pause = new PauseTransition(Duration.millis(OBJECT_LIFETIME)); // Пауза на 5 секунд
         pause.setOnFinished(event -> removeObject(object));  // Після паузи викликаємо метод для видалення
@@ -97,9 +95,9 @@ public class QueueSimulation extends Application {
     }
 
     // Видалення об'єкта з черги та панелі
-    private void removeObject(PhysicalObject object) {
+    private void removeObject(IPhysicalObject object) {
         objects.remove(object);  // Видаляємо об'єкт з списку
-        renderEngine.removeObject(object.getPosition());  // Видаляємо об'єкт з панелі
+        renderEngine.removeObject(object);  // Видаляємо об'єкт з панелі
         System.out.println("Object removed after 5 seconds");
     }
 

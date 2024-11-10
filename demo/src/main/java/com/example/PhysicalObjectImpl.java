@@ -1,16 +1,16 @@
 package com.example;
+
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-
-public class PhysicalObjectImpl implements PhysicalObject {
+public class PhysicalObjectImpl implements IPhysicalObject {
     private Position position;
     private String state;
     private Rectangle rectangle;
 
     public PhysicalObjectImpl(double x, double y, double width, double height, Color color) {
         this.position = new Position(x, y);
-        this.state = "inQueue";
+        this.state = "inQueue";  // Початковий стан
         this.rectangle = new Rectangle(width, height, color);
         this.rectangle.setX(x);
         this.rectangle.setY(y);
@@ -21,46 +21,51 @@ public class PhysicalObjectImpl implements PhysicalObject {
         return position;
     }
 
-    @Override
     public void setPosition(Position position) {
         this.position = position;
         this.rectangle.setX(position.getX());
         this.rectangle.setY(position.getY());
     }
 
-    @Override
     public String getState() {
         return state;
     }
 
-    @Override
     public void setState(String state) {
         this.state = state;
     }
 
     @Override
     public void moveTo(Position newPosition) {
-        setPosition(newPosition);
+        setPosition(newPosition);  // Оновлюємо позицію
     }
 
-    @Override
+    // Метод для перевірки, чи досяг об'єкт цільової позиції
     public boolean hasArrived(Position targetPosition) {
         return this.position.equals(targetPosition);
     }
 
+    // Оновлюємо стан після досягнення позиції
     @Override
     public void checkArrival(Position targetPosition) {
         if (hasArrived(targetPosition)) {
-            setState("arrived");
+            setState("arrived");  // Якщо досягнув, змінюємо стан
         }
     }
 
-    @Override
+    // Оскільки JavaFX обробляє рендеринг без цього методу, він може бути порожнім
     public void render() {
-        // Виведення на екран (використовуємо цей метод для візуалізації в JavaFX)
+        // Виведення на екран (реалізація вже через JavaFX)
     }
 
+    @Override
     public Rectangle getRectangle() {
-        return rectangle;
+        return rectangle;  // Повертаємо прямокутник для рендерингу
+    }
+
+    // Реалізація методу setRectangle із інтерфейсу IPhysicalObject
+    @Override
+    public void setRectangle(Rectangle rectangle) {
+        this.rectangle = rectangle;  // Встановлюємо новий прямокутник
     }
 }

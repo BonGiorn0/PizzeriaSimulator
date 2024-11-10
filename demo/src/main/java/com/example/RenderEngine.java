@@ -1,54 +1,31 @@
 package com.example;
 
-import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 public class RenderEngine {
-    private final Pane pane;
-    private final Map<Position, Rectangle> objects;
-    private final Map<Position, Image> images;
+    private Pane pane;
+    private List<IPhysicalObject> objects;  // Змінили тип на IPhysicalObject
 
     public RenderEngine(Pane pane) {
         this.pane = pane;
-        this.objects = new HashMap<>();
-        this.images = new HashMap<>();
     }
 
-    // Додати фізичний об'єкт на панель
-    public void addObject(Position position, Rectangle object) {
-        objects.put(position, object);
-        pane.getChildren().add(object);
+    // Додавання об'єкта
+    public void addObject(IPhysicalObject object) {
+        // Оскільки ми використовуємо IPhysicalObject, отримаємо прямокутник через геттер
+        pane.getChildren().add(object.getRectangle());
     }
 
-    // Видалити об'єкт з панелі
-    public void removeObject(Position position) {
-        Rectangle rect = objects.remove(position);
-        if (rect != null) {
-            pane.getChildren().remove(rect);
-        }
+    // Оновлення позиції об'єкта
+    public void updateObjectPosition(IPhysicalObject object, Position oldPos, Position newPos) {
+        object.getRectangle().setX(newPos.getX());
+        object.getRectangle().setY(newPos.getY());
     }
 
-    // Отримати зображення для заданої позиції
-    public Image getImage(Position position) {
-        return images.get(position);
-    }
-
-    // Оновити позицію об'єкта
-    public void updateObjectPosition(Position oldPos, Position newPos) {
-        Rectangle rect = objects.remove(oldPos);
-        if (rect != null) {
-            objects.put(newPos, rect);
-            rect.setX(newPos.getX());
-            rect.setY(newPos.getY());
-        }
-    }
-
-    // Додавання зображення для певної позиції
-    public void addImage(Position position, Image image) {
-        images.put(position, image);
+    // Видалення об'єкта
+    public void removeObject(IPhysicalObject object) {
+        pane.getChildren().remove(object.getRectangle());
     }
 }
