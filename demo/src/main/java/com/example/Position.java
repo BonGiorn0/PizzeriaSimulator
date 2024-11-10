@@ -1,8 +1,10 @@
 package com.example;
 
+import java.util.Objects;
+
 public class Position {
-    private final double x;
-    private final double y;
+    private double x;
+    private double y;
 
     public Position(double x, double y) {
         this.x = x;
@@ -17,7 +19,6 @@ public class Position {
         return y;
     }
 
-    // Переозначення equals та hashCode для коректного порівняння позицій
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
@@ -28,6 +29,6 @@ public class Position {
 
     @Override
     public int hashCode() {
-        return 31 * (int) x + (int) y;
+        return Objects.hash(x, y);
     }
 }
