@@ -12,6 +12,11 @@ import javafx.util.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.Restaurant.GraphicalView.IPhysicalObject;
+import com.example.Restaurant.GraphicalView.PhysicalObject;
+import com.example.Restaurant.GraphicalView.Position;
+import com.example.Restaurant.GraphicalView.RenderEngine;
+
 public class QueueSimulation extends Application {
     private static final int RECT_SIZE = 20;
     private static final double SPEED = 1;  // Швидкість руху
@@ -47,7 +52,7 @@ public class QueueSimulation extends Application {
 
     // Додавання нового об'єкта до черги
     private void addObjectToQueue() {
-        IPhysicalObject object = new PhysicalObjectImpl(50, 50, RECT_SIZE, RECT_SIZE, Color.BLUE);
+        IPhysicalObject object = new PhysicalObject(50, 50, RECT_SIZE, RECT_SIZE, Color.BLUE);
         renderEngine.addObject(object);  // Додаємо об'єкт до renderEngine
         objects.add(object);  // Додаємо в список об'єктів
         System.out.println("Added new object at (50, 50)");
