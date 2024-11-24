@@ -1,4 +1,4 @@
-package com.example.Restaurant.GraphicalView;
+package com.example.GraphicalView;
 
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;

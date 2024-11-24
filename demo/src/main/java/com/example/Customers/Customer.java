@@ -1,10 +1,8 @@
 package com.example.Customers;
 
-import com.example.Customers.CustomerLogic.ICustomerLogic;
-import com.example.Restaurant.ICashDesk;
-import com.example.Restaurant.IOrder;
-import com.example.Restaurant.GraphicalView.IMovingPerson;
-import com.example.Restaurant.GraphicalView.IPhysicalObject;
+import com.example.CustomerLogic.*;
+import com.example.GraphicalView.*;
+import com.example.Restaurant.*;
 
 public class Customer{
 	private IPhysicalObject physicalObject;

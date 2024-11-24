@@ -1,4 +1,4 @@
-package com.example.Restaurant.GraphicalView;
+package com.example.GraphicalView;
 
 public interface IMovingPerson {
 

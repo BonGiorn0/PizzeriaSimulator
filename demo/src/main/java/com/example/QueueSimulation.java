@@ -12,10 +12,7 @@ import javafx.util.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.Restaurant.GraphicalView.IPhysicalObject;
-import com.example.Restaurant.GraphicalView.PhysicalObject;
-import com.example.Restaurant.GraphicalView.Position;
-import com.example.Restaurant.GraphicalView.RenderEngine;
+import com.example.GraphicalView.*;
 
 public class QueueSimulation extends Application {
     private static final int RECT_SIZE = 20;

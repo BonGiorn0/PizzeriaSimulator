@@ -1,4 +1,4 @@
-package com.example.Customers.CustomerLogic;
+package com.example.CustomerLogic;
 
 import com.example.Restaurant.ICashDesk;
 import com.example.Restaurant.IMenu;
