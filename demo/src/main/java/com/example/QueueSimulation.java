@@ -9,10 +9,16 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 
+import com.example.Customers.Customer;
+import com.example.CustomerLogic.*;
 import com.example.GraphicalView.*;
+import com.example.Restaurant.*;
 
 public class QueueSimulation extends Application {
     private static final int RECT_SIZE = 20;
@@ -45,6 +51,48 @@ public class QueueSimulation extends Application {
         stage.setScene(scene);
         stage.setTitle("Queue Simulation");
         stage.show();
+        
+//        -------------------------------------------------------------------------
+//        --------------------Example????------------------------------------------
+//        -------------------------------------------------------------------------
+        
+        //Init
+        IMenu menu = new Menu();
+        menu.addItem(new MenuItem("Lasagna", 315.00, "Cool and fresh piece of food for Garfield"));
+        menu.addItem(new MenuItem("Some", 123, "Another"));
+        menu.addItem(new MenuItem("hehe", 512, "SomeSome"));
+        
+        List<ICashDesk> cds = new ArrayList<ICashDesk>();
+        cds.add(new CashDesk(new ArrayDeque<ICustomerLogic>(), menu));
+        cds.add(new CashDesk(new ArrayDeque<ICustomerLogic>(), menu));
+        cds.add(new CashDesk(new ArrayDeque<ICustomerLogic>(), menu));
+        
+        
+        //Immaculate conception and delivery of several customers
+        //I believe we should add them to the renderEngine, too
+        IPhysicalObject phob = new PhysicalObject(0, 0, RECT_SIZE, RECT_SIZE, Color.AZURE);
+        Customer cst = new Customer(phob, new CustomerLogic());
+        
+        var cashDesk = cst.getCustomerLogic().chooseCashDesk(cds);
+        
+        cst.setCashDesk(cashDesk);
+        
+        var newMenu = cst.getCashDesk().getMenu();
+        IOrder order = cst.getCustomerLogic().chooseOrder(newMenu);
+        cst.setOrder(order);
+        //...
+        //...
+        //other customers also get their orders
+        //...
+        //...
+        
+        //Not sure. It should look not like this
+        for(var cd : cds) {
+        	cd.putOrderInQueue();
+        }
+//        -------------------------------------------------------------------------
+//        -------------------------------------------------------------------------
+//        -------------------------------------------------------------------------
     }
 
     // Додавання нового об'єкта до черги

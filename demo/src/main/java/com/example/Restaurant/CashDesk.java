@@ -10,10 +10,10 @@ public class CashDesk implements ICashDesk {
 	private IMenu menu;
 	private IOrder order;
 	
-	public CashDesk(Queue<ICustomerLogic> queue, IMenu menu, IOrder order) {
+	public CashDesk(Queue<ICustomerLogic> queue, IMenu menu) {
 		this.queue = queue;
 		this.menu = menu;
-		this.order = order;
+		order = new Order();
 	}
 
 	public Queue<ICustomerLogic> getQueue() {
@@ -24,6 +24,7 @@ public class CashDesk implements ICashDesk {
 		return order;
 	}
 	
+	@Override
 	public IMenu getMenu() {
 		return menu;
 	}

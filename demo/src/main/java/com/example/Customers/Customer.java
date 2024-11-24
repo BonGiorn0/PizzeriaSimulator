@@ -17,10 +17,10 @@ public class Customer{
 		this.customerLogic = customerLogic;
 	}
 	
-	public void enter(IMenu menu) {
-		this.cashDesk = customerLogic.chooseCashDesk();
-		this.order = customerLogic.chooseOrder(menu);
-	}
+//	public void enter(IMenu menu) {
+//		this.cashDesk = customerLogic.chooseCashDesk();
+//		this.order = customerLogic.chooseOrder(menu);
+//	}
 	
 	public IPhysicalObject getPhysicalObject() {
 		return physicalObject;
@@ -34,5 +34,13 @@ public class Customer{
 		return cashDesk;
 	}
 	
+	public void setCashDesk(ICashDesk cashDesk) {
+		this.cashDesk = cashDesk;
+		cashDesk.addCustomerToQueue(customerLogic);
+	}
+
+	public void setOrder(IOrder order) {
+		this.order = order;		
+	}
 	
 }

@@ -11,7 +11,7 @@ public class Menu implements IMenu {
 		itemList = new ArrayList<MenuItem>();
 	}
 	
-	public void add(MenuItem item) {
+	public void addItem(MenuItem item) {
 		itemList.add(item);
 	}
 	
