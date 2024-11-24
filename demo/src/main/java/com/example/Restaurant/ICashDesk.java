@@ -1,5 +1,9 @@
 package com.example.Restaurant;
 
-public interface ICashDesk {
+import com.example.CustomerLogic.ICustomerLogic;
 
+public interface ICashDesk {
+	void takeOrder();
+	void addCustomerToQueue(ICustomerLogic customerLogic);
+	void putOrderInQueue();
 }

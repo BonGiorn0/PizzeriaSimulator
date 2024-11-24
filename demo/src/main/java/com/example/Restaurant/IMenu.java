@@ -1,5 +1,8 @@
 package com.example.Restaurant;
 
-public interface IMenu {
+import java.util.List;
 
+public interface IMenu {
+	MenuItem chooseItem(int index);
+	List<MenuItem> getMenuItems();
 }
