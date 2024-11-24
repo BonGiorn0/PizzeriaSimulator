@@ -1,31 +1,30 @@
 package com.example;
 
 import javafx.scene.layout.Pane;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.image.ImageView;
 import java.util.List;
 
 public class RenderEngine {
     private Pane pane;
-    private List<IPhysicalObject> objects;  // Змінили тип на IPhysicalObject
+    private List<IPhysicalObject> objects;  // Список IPhysicalObject
 
     public RenderEngine(Pane pane) {
         this.pane = pane;
     }
 
-    // Додавання об'єкта
     public void addObject(IPhysicalObject object) {
-        // Оскільки ми використовуємо IPhysicalObject, отримаємо прямокутник через геттер
+        // Додаємо ImageView замість Rectangle
         pane.getChildren().add(object.getRectangle());
     }
 
-    // Оновлення позиції об'єкта
     public void updateObjectPosition(IPhysicalObject object, Position oldPos, Position newPos) {
+        // Оновлення позиції ImageView
         object.getRectangle().setX(newPos.getX());
         object.getRectangle().setY(newPos.getY());
     }
 
-    // Видалення об'єкта
     public void removeObject(IPhysicalObject object) {
+        // Видалення ImageView
         pane.getChildren().remove(object.getRectangle());
     }
 }

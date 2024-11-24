@@ -1,19 +1,24 @@
 package com.example;
 
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 public class PhysicalObjectImpl implements IPhysicalObject {
     private Position position;
     private String state;
-    private Rectangle rectangle;
+    private ImageView imageView;
 
-    public PhysicalObjectImpl(double x, double y, double width, double height, Color color) {
+    public PhysicalObjectImpl(double x, double y, double width, double height, String imagePath) {
         this.position = new Position(x, y);
-        this.state = "inQueue";  // Початковий стан
-        this.rectangle = new Rectangle(width, height, color);
-        this.rectangle.setX(x);
-        this.rectangle.setY(y);
+        this.state = "inQueue";
+
+        // Завантаження зображення
+        Image image = new Image(imagePath);
+        this.imageView = new ImageView(image);
+        this.imageView.setFitWidth(width);  // Встановлюємо ширину
+        this.imageView.setFitHeight(height);  // Встановлюємо висоту
+        this.imageView.setX(x);  // Початкова координата X
+        this.imageView.setY(y);  // Початкова координата Y
     }
 
     @Override
@@ -21,51 +26,52 @@ public class PhysicalObjectImpl implements IPhysicalObject {
         return position;
     }
 
+    @Override
     public void setPosition(Position position) {
         this.position = position;
-        this.rectangle.setX(position.getX());
-        this.rectangle.setY(position.getY());
+        this.imageView.setX(position.getX());
+        this.imageView.setY(position.getY());
     }
 
+    @Override
     public String getState() {
         return state;
     }
 
+    @Override
     public void setState(String state) {
         this.state = state;
     }
 
     @Override
     public void moveTo(Position newPosition) {
-        setPosition(newPosition);  // Оновлюємо позицію
+        setPosition(newPosition);
     }
 
-    // Метод для перевірки, чи досяг об'єкт цільової позиції
+    @Override
     public boolean hasArrived(Position targetPosition) {
         return this.position.equals(targetPosition);
     }
 
-    // Оновлюємо стан після досягнення позиції
     @Override
     public void checkArrival(Position targetPosition) {
         if (hasArrived(targetPosition)) {
-            setState("arrived");  // Якщо досягнув, змінюємо стан
+            setState("arrived");
         }
     }
 
-    // Оскільки JavaFX обробляє рендеринг без цього методу, він може бути порожнім
+    @Override
     public void render() {
-        // Виведення на екран (реалізація вже через JavaFX)
+        // Можливо, візуалізація вже автоматична через ImageView
     }
 
     @Override
-    public Rectangle getRectangle() {
-        return rectangle;  // Повертаємо прямокутник для рендерингу
+    public ImageView getRectangle() {  // Метод тепер повертає ImageView
+        return imageView;
     }
 
-    // Реалізація методу setRectangle із інтерфейсу IPhysicalObject
     @Override
-    public void setRectangle(Rectangle rectangle) {
-        this.rectangle = rectangle;  // Встановлюємо новий прямокутник
+    public void setRectangle(ImageView rectangle) {  // Змінюємо параметр на ImageView
+        this.imageView = rectangle;
     }
 }
