@@ -45,6 +45,7 @@ public class CashDesk implements ICashDesk {
 	public void putOrderInQueue() {
 		
 		// TODO there is an OrderQueue object somewhere. Put the order in that queue.
+		// TODO set the order name (check number?) there
 		
 	}
 

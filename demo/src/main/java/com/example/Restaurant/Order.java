@@ -1,5 +1,6 @@
 package com.example.Restaurant;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Order implements IOrder{
@@ -15,9 +16,17 @@ public class Order implements IOrder{
 		return price;
 	}
 
+	public Order() {
+		itemList = new ArrayList<IMenuItem>();
+	}
+	
 	@Override
 	public String getName() {
 		return name;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	@Override
