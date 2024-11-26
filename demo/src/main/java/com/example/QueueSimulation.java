@@ -1,18 +1,17 @@
 package com.example;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 public class QueueSimulation extends Application {
     private static final int RECT_SIZE = 50;
@@ -40,13 +39,19 @@ public class QueueSimulation extends Application {
         addTimeline.setCycleCount(Timeline.INDEFINITE);
         addTimeline.play();
 
+        Timeline cookTimeline = new Timeline(new KeyFrame(Duration.millis(30), e -> moveCooks()));
+        cookTimeline.setCycleCount(Timeline.INDEFINITE);
+        cookTimeline.play();
         // Сцена та налаштування
+        addCooks();
+  
+
         Scene scene = new Scene(pane, 600, 600);
         stage.setScene(scene);
         stage.setTitle("Queue Simulation");
         stage.show();
     }
-    String imagePath = new File("C:\\Users\\38068\\Desktop\\IMG_3180.PNG").toURI().toString();
+    String imagePath = new File("/home/artem/CrossPP/PizzeriaSimulator/demo/src/main/java/com/example/human.png").toURI().toString();
 
     // Додавання нового об'єкта до черги
     private void addObjectToQueue() {
@@ -55,6 +60,42 @@ public class QueueSimulation extends Application {
         objects.add(object);  // Додаємо в список об'єктів
         System.out.println("Added new object at (50, 50)");
     }
+    private final List<Cook> cooks = new ArrayList<>();
+
+private void addCooks() {
+    String cookImagePath = new File("/home/artem/CrossPP/PizzeriaSimulator/demo/src/main/java/com/example/cook.png").toURI().toString();
+
+    for (int i = 0; i < 3; i++) {  // Example: 2 cooks
+        Cook cook = new Cook(50 * i, 50 * i, RECT_SIZE, RECT_SIZE, cookImagePath);
+        cooks.add(cook);
+        renderEngine.addObject(cook);
+    }
+}
+
+private void moveCooks() {
+    for (Cook cook : cooks) {
+        if (cook.isPaused()) continue;  // Skip paused cooks
+
+        Position currentPos = cook.getPosition();
+        Position targetPos = cook.getTargetOvenPosition();
+
+        double dx = targetPos.getX() - currentPos.getX();
+        double dy = targetPos.getY() - currentPos.getY();
+        double distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distance > SPEED) {
+            cook.moveTo(new Position(
+                currentPos.getX() + SPEED * dx / distance,
+                currentPos.getY() + SPEED * dy / distance
+            ));
+        } else {
+            cook.moveTo(targetPos);  // Snap to target
+            cook.pauseAtOven(2000, cook::moveToNextOven);  // Pause for 2 seconds at the oven
+        }
+
+        renderEngine.updateObjectPosition(cook, currentPos, cook.getPosition());
+    }
+}
 
     // Рух об'єктів до черги перед касою
     private void moveObjectsToQueue() {
@@ -85,6 +126,7 @@ public class QueueSimulation extends Application {
             object.checkArrival(new Position(targetX, targetY));
 
             Position newPos = object.getPosition();
+            moveCooks();
             renderEngine.updateObjectPosition(object, oldPos, newPos);  // Оновлення позиції об'єкта
         }
     }
