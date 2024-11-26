@@ -11,9 +11,9 @@ public class Cook extends PhysicalObjectImpl {
     }
 
     private static final Position[] OVEN_POSITIONS = {
-    new Position(350, 300),
-    new Position(550, 300),
-    new Position(750, 300)
+    new Position(300, 300),
+    new Position(450, 300),
+    new Position(550, 300)
 };
 
     public Cook(double x, double y, double width, double height, String imagePath) {
