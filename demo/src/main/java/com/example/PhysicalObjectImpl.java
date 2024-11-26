@@ -7,7 +7,14 @@ public class PhysicalObjectImpl implements IPhysicalObject {
     private Position position;
     private String state;
     private ImageView imageView;
+    private boolean isOrderReady;
+    public boolean isOrderReady() {
+        return isOrderReady;
+    }
 
+    public void setOrderReady(boolean orderReady) {
+        isOrderReady = orderReady;
+    }
     public PhysicalObjectImpl(double x, double y, double width, double height, String imagePath) {
         this.position = new Position(x, y);
         this.state = "inQueue";

@@ -2,22 +2,23 @@ package com.example;
 
 import javafx.animation.PauseTransition;
 import javafx.util.Duration;
-
 public class Cook extends PhysicalObjectImpl {
     private int currentOvenIndex = 0;
     private boolean isPaused = false;
-    public boolean isPaused() {
-        return isPaused;
-    }
+    private Order currentOrder;
 
     private static final Position[] OVEN_POSITIONS = {
-    new Position(300, 300),
-    new Position(450, 300),
-    new Position(550, 300)
-};
+            new Position(300, 300),
+            new Position(450, 300),
+            new Position(550, 300)
+    };
 
     public Cook(double x, double y, double width, double height, String imagePath) {
         super(x, y, width, height, imagePath);
+    }
+
+    public boolean isPaused() {
+        return isPaused;
     }
 
     public void moveToNextOven() {
@@ -28,6 +29,10 @@ public class Cook extends PhysicalObjectImpl {
 
     public Position getTargetOvenPosition() {
         return OVEN_POSITIONS[currentOvenIndex];
+    }
+
+    public void startOrder(Order order) {
+        this.currentOrder = order;
     }
 
     public void pauseAtOven(long delayMillis, Runnable onComplete) {
