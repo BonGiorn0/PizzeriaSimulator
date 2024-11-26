@@ -1,12 +1,12 @@
 package com.example;
 
 import javafx.animation.KeyFrame;
-import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -17,21 +17,39 @@ import java.util.List;
 public class QueueSimulation extends Application {
     private static final int RECT_SIZE = 50;
 
-    private static final double SPEED = 1;  // Швидкість руху
-    private static final double CASHIER_X = 500;  // X-координата каси
-    private static final double CASHIER_Y = 400;  // Y-координата каси
-    private static final double QUEUE_GAP = 70;  // Відстань між об'єктами в черзі
-    private static final int ADD_INTERVAL = 3500;  // Інтервал додавання нових об'єктів (в мс)
-    private static final int OBJECT_LIFETIME = 1500;  // Час до видалення об'єкта (5 секунд)
+    private static final double SPEED = 10; // Швидкість руху
+    private static final double CASHIER_X = 150; // X-координата каси
+    private static final double CASHIER_Y = 300; // Y-координата каси
+    private static final double QUEUE_GAP = 70; // Відстань між об'єктами в черзі
+    private static final double SECOND_QUEUE_X = 150; // X-координата другої черги
+    private static final double SECOND_QUEUE_Y = 480; // Y-координата другої черги
 
-    private final List<IPhysicalObject> objects = new ArrayList<>();  // Список фізичних об'єктів
-    private final Pane pane = new Pane();  // Панель для відображення
-    private final RenderEngine renderEngine = new RenderEngine(pane);  // Рендеринг об'єктів
+    private static final int ADD_INTERVAL = 500; // Інтервал додавання нових об'єктів (в мс)
+    private static final int MAX_QUEUE_SIZE = 3; // Максимальна кількість людей у черзі
+
+    private final List<IPhysicalObject> firstQueue = new ArrayList<>(); // Список для першої черги
+    private final List<IPhysicalObject> secondQueue = new ArrayList<>(); // Список для другої черги
+    private final Pane pane = new Pane(); // Панель для відображення
+    private final RenderEngine renderEngine = new RenderEngine(pane); // Рендеринг об'єктів
+
+    private final String backgroundImagePath = new File("C:\\Users\\38068\\Documents\\GitHub\\PizzeriaSimulator\\demo\\src\\main\\java\\com\\example\\fon.png").toURI().toString();
+    private final String imagePath = new File("C:\\Users\\38068\\Desktop\\human.PNG").toURI().toString();
+
     @Override
     public void start(Stage stage) {
+        // Додаємо фонову картинку
+        Image backgroundImage = new Image(backgroundImagePath);
+        ImageView backgroundView = new ImageView(backgroundImage);
+        backgroundView.setFitWidth(720);
+        backgroundView.setFitHeight(600);
+        backgroundView.setPreserveRatio(false);
+        pane.getChildren().add(backgroundView); // Додаємо фонове зображення до Pane
 
         // Анімація для оновлення позиції об'єктів у черзі
-        Timeline moveTimeline = new Timeline(new KeyFrame(Duration.millis(30), e -> moveObjectsToQueue()));
+        Timeline moveTimeline = new Timeline(new KeyFrame(Duration.millis(30), e -> {
+            moveObjectsToQueue(firstQueue, CASHIER_X, CASHIER_Y, true); // Рух до першої черги
+            moveObjectsToQueue(secondQueue, SECOND_QUEUE_X, SECOND_QUEUE_Y, false); // Рух до другої черги
+        }));
         moveTimeline.setCycleCount(Timeline.INDEFINITE);
         moveTimeline.play();
 
@@ -41,67 +59,64 @@ public class QueueSimulation extends Application {
         addTimeline.play();
 
         // Сцена та налаштування
-        Scene scene = new Scene(pane, 600, 600);
+        Scene scene = new Scene(pane, 720, 600);
         stage.setScene(scene);
         stage.setTitle("Queue Simulation");
         stage.show();
     }
-    String imagePath = new File("C:\\Users\\38068\\Desktop\\IMG_3180.PNG").toURI().toString();
 
     // Додавання нового об'єкта до черги
     private void addObjectToQueue() {
-        IPhysicalObject object = new PhysicalObjectImpl(-100, 400, RECT_SIZE, RECT_SIZE,imagePath);
-        renderEngine.addObject(object);  // Додаємо об'єкт до renderEngine
-        objects.add(object);  // Додаємо в список об'єктів
-        System.out.println("Added new object at (50, 50)");
+        if (firstQueue.size() >= MAX_QUEUE_SIZE) {
+            System.out.println("First queue is full. Cannot add new object.");
+            return; // Не додаємо нові об'єкти, якщо черга заповнена
+        }
+
+        IPhysicalObject object = new PhysicalObjectImpl(-100, 300, RECT_SIZE, RECT_SIZE, imagePath);
+        renderEngine.addObject(object); // Додаємо об'єкт до renderEngine
+        firstQueue.add(object); // Додаємо в список першої черги
+        System.out.println("Added new object to the first queue");
     }
 
-    // Рух об'єктів до черги перед касою
-    private void moveObjectsToQueue() {
-        for (int i = 0; i < objects.size(); i++) {
-            IPhysicalObject object = objects.get(i);
+    // Рух об'єктів до заданої черги
+    private void moveObjectsToQueue(List<IPhysicalObject> queue, double targetX, double targetY, boolean moveToSecondQueue) {
+        for (int i = 0; i < queue.size(); i++) {
+            IPhysicalObject object = queue.get(i);
             Position oldPos = object.getPosition();
 
             // Координати цілі для кожного об'єкта
-            double targetX = CASHIER_X - i * QUEUE_GAP;
-            double targetY = CASHIER_Y;
+            double targetPosX = targetX - i * QUEUE_GAP;
+            double targetPosY = targetY;
 
-            double dx = targetX - oldPos.getX();
-            double dy = targetY - oldPos.getY();
+            double dx = targetPosX - oldPos.getX();
+            double dy = targetPosY - oldPos.getY();
             double distance = Math.sqrt(dx * dx + dy * dy);
 
             // Якщо відстань більша за задану швидкість, рухаємось
             if (distance > SPEED) {
                 object.moveTo(new Position(oldPos.getX() + SPEED * dx / distance, oldPos.getY() + SPEED * dy / distance));
             } else {
-                object.moveTo(new Position(targetX, targetY));  // Якщо відстань менша за швидкість, досягаємо цілі
-                // Якщо об'єкт досяг цілі, запускаємо таймер на видалення тільки для першого об'єкта
-                if (i == 0) {
-                    startObjectRemovalTimer(object);
+                object.moveTo(new Position(targetPosX, targetPosY)); // Якщо відстань менша за швидкість, досягаємо цілі
+                if (moveToSecondQueue && i == 0) {
+                    moveToSecondQueue(object); // Переміщення до другої черги
                 }
             }
 
-            // Оновлення стану після прибуття
-            object.checkArrival(new Position(targetX, targetY));
-
             Position newPos = object.getPosition();
-            renderEngine.updateObjectPosition(object, oldPos, newPos);  // Оновлення позиції об'єкта
+            renderEngine.updateObjectPosition(object, oldPos, newPos); // Оновлення позиції об'єкта
         }
     }
 
-    // Запуск таймера для видалення об'єкта через 5 секунд після досягнення цілі
-    private void startObjectRemovalTimer(IPhysicalObject object) {
-        // Таймер для видалення об'єкта через 5 секунд після досягнення цілі
-        PauseTransition pause = new PauseTransition(Duration.millis(OBJECT_LIFETIME)); // Пауза на 5 секунд
-        pause.setOnFinished(event -> removeObject(object));  // Після паузи викликаємо метод для видалення
-        pause.play();
-    }
+    // Переміщення об'єкта до другої черги
+    private void moveToSecondQueue(IPhysicalObject object) {
+        if (secondQueue.size() >= MAX_QUEUE_SIZE) {
+            System.out.println("First queue is full. Cannot add new object.");
+            return; // Не додаємо нові об'єкти, якщо черга заповнена
+        }
+        firstQueue.remove(object);
 
-    // Видалення об'єкта з черги та панелі
-    private void removeObject(IPhysicalObject object) {
-        objects.remove(object);  // Видаляємо об'єкт з списку
-        renderEngine.removeObject(object);  // Видаляємо об'єкт з панелі
-        System.out.println("Object removed after 5 seconds");
+        secondQueue.add(object);
+        System.out.println("Moved object to second queue");
     }
 
     // Основний метод для запуску програми
